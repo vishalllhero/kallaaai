@@ -1,129 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>KALLAA Creative AI</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      background: #0f172a;
-      color: white;
-      margin: 0;
-      padding: 0;
-    }
-
-    h1 {
-      font-size: 40px;
-      margin-top: 40px;
-    }
-
-    p {
-      color: #94a3b8;
-      margin-bottom: 30px;
-    }
-
-    #chatbox {
-      width: 80%;
-      max-width: 600px;
-      margin: auto;
-      text-align: left;
-      margin-top: 20px;
-    }
-
-    .msg {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 10px;
-      max-width: 80%;
-    }
-
-    .user {
-      background: #6366f1;
-      margin-left: auto;
-    }
-
-    .bot {
-      background: #1e293b;
-    }
-
-    input {
-      padding: 12px;
-      width: 60%;
-      border-radius: 8px;
-      border: none;
-      outline: none;
-    }
-
-    button {
-      padding: 12px 20px;
-      border-radius: 8px;
-      border: none;
-      background: #6366f1;
-      color: white;
-      cursor: pointer;
-      margin-left: 10px;
-    }
-
-    button:hover {
-      background: #4f46e5;
-    }
-  </style>
+  <title>KALLAA AI</title>
 </head>
-
 <body>
 
-  <h1>🔥 KALLAA Creative AI</h1>
-  <p>Your Creative AI Partner 🚀</p>
+<h1>🎨 KALLAA AI Assistant</h1>
 
-  <input id="input" placeholder="Ask anything..." />
-  <button onclick="send()">Send</button>
+<input id="input" placeholder="Ask something..." />
+<button onclick="send()">Send</button>
 
-  <div id="chatbox"></div>
+<br><br>
 
-  <script>
-    async function send() {
-      const input = document.getElementById("input");
-      const message = input.value;
+<button onclick="startListening()">🎤 Speak</button>
 
-      if (!message) return;
+<p id="response"></p>
 
-      const chatbox = document.getElementById("chatbox");
+<script>
+async function send() {
+  const message = document.getElementById("input").value;
 
-      // user message
-      const userMsg = document.createElement("div");
-      userMsg.className = "msg user";
-      userMsg.innerText = message;
-      chatbox.appendChild(userMsg);
+  const res = await fetch("/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ message })
+  });
 
-      input.value = "";
+  const data = await res.json();
+  document.getElementById("response").innerText = data.reply;
 
-      // loading
-      const botMsg = document.createElement("div");
-      botMsg.className = "msg bot";
-      botMsg.innerText = "Typing...";
-      chatbox.appendChild(botMsg);
+  speak(data.reply); // 🔊 AI बोलेगा भी
+}
 
-      try {
-        const res = await fetch("/chat", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ message })
-        });
+// 🎤 Speech to Text
+function startListening() {
+  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  
+  recognition.lang = "en-US";
 
-        const data = await res.json();
+  recognition.onresult = function(event) {
+    const text = event.results[0][0].transcript;
+    document.getElementById("input").value = text;
+    send();
+  };
 
-        botMsg.innerText = data.reply || "No reply";
+  recognition.start();
+}
 
-      } catch (err) {
-        botMsg.innerText = "Error aa gaya 😢";
-      }
-
-      chatbox.scrollTop = chatbox.scrollHeight;
-    }
-  </script>
+// 🔊 Text to Speech
+function speak(text) {
+  const speech = new SpeechSynthesisUtterance(text);
+  speech.lang = "en-US";
+  window.speechSynthesis.speak(speech);
+}
+</script>
 
 </body>
 </html>
