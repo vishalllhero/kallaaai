@@ -11,12 +11,12 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// serve frontend
+// frontend serve
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// 🔥 FAST FREE AI (OpenRouter)
+// OpenRouter FREE AI
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
@@ -25,26 +25,26 @@ app.post("/chat", async (req, res) => {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "mistralai/mistral-7b-instruct", // fast free model
+        model: "mistralai/mistral-7b-instruct",
         messages: [
           { role: "user", content: message }
-        ],
-      }),
+        ]
+      })
     });
 
     const data = await response.json();
 
     res.json({
-      reply: data.choices?.[0]?.message?.content || "No reply",
+      reply: data.choices?.[0]?.message?.content || "No reply"
     });
 
   } catch (err) {
     console.error(err);
     res.json({
-      reply: "Error aa gaya bhai 😢",
+      reply: "Error aa gaya bhai 😢"
     });
   }
 });
