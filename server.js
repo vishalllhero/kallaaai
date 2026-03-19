@@ -28,7 +28,7 @@ app.post("/chat", async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "mistralai/mistral-7b-instruct:free",
+        model: "openrouter/auto",
         messages: [
           { role: "user", content: message }
         ]
