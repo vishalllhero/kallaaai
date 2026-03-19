@@ -1,66 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>KALLAA AI</title>
+  <title>KALLAA Creative AI</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      font-size: 40px;
+      margin-top: 40px;
+    }
+
+    p {
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
+
+    #chatbox {
+      width: 80%;
+      max-width: 600px;
+      margin: auto;
+      text-align: left;
+      margin-top: 20px;
+    }
+
+    .msg {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 10px;
+      max-width: 80%;
+    }
+
+    .user {
+      background: #6366f1;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #1e293b;
+    }
+
+    input {
+      padding: 12px;
+      width: 60%;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
+    button {
+      padding: 12px 20px;
+      border-radius: 8px;
+      border: none;
+      background: #6366f1;
+      color: white;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    button:hover {
+      background: #4f46e5;
+    }
+  </style>
 </head>
+
 <body>
 
-<style>
-body {
-  font-family: Arial, sans-serif;
-  text-align: center;
-  background: #0f172a;
-  color: white;
-}
+  <h1>🔥 KALLAA Creative AI</h1>
+  <p>Your Creative AI Partner 🚀</p>
 
-h1 {
-  font-size: 40px;
-  margin-top: 20px;
-}
+  <input id="input" placeholder="Ask anything..." />
+  <button onclick="send()">Send</button>
 
-p {
-  color: #94a3b8;
-  margin-bottom: 20px;
-}
+  <div id="chatbox"></div>
 
-input {
-  padding: 10px;
-  width: 250px;
-  border-radius: 8px;
-  border: none;
-}
+  <script>
+    async function send() {
+      const input = document.getElementById("input");
+      const message = input.value;
 
-button {
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: none;
-  background: #6366f1;
-  color: white;
-  cursor: pointer;
-}
-</style>
+      if (!message) return;
 
-<input id="input" placeholder="Ask anything..." />
-<button onclick="send()">Send</button>
+      const chatbox = document.getElementById("chatbox");
 
-<p id="response"></p>
+      // user message
+      const userMsg = document.createElement("div");
+      userMsg.className = "msg user";
+      userMsg.innerText = message;
+      chatbox.appendChild(userMsg);
 
-<script>
-async function send() {
-  const message = document.getElementById("input").value;
+      input.value = "";
 
-  const res = await fetch("/chat", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message })
-  });
+      // loading
+      const botMsg = document.createElement("div");
+      botMsg.className = "msg bot";
+      botMsg.innerText = "Typing...";
+      chatbox.appendChild(botMsg);
 
-  const data = await res.json();
-  document.getElementById("response").innerText = data.reply;
-}
-</script>
+      try {
+        const res = await fetch("/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ message })
+        });
+
+        const data = await res.json();
+
+        botMsg.innerText = data.reply || "No reply";
+
+      } catch (err) {
+        botMsg.innerText = "Error aa gaya 😢";
+      }
+
+      chatbox.scrollTop = chatbox.scrollHeight;
+    }
+  </script>
 
 </body>
 </html>
