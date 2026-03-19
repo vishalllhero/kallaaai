@@ -8,21 +8,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔐 API KEY from Render env
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// 📁 Fix for __dirname
+// fix __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 🏠 HOMEPAGE ROUTE (IMPORTANT FIX)
+// serve frontend
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// 🔥 CHAT API
+// OpenAI setup
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// chat route
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
@@ -30,25 +30,23 @@ app.post("/chat", async (req, res) => {
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
-        {
-          role: "user",
-          content: message,
-        },
+        { role: "user", content: message }
       ],
     });
 
     res.json({
       reply: completion.choices[0].message.content,
     });
+
   } catch (err) {
     console.error(err);
     res.json({
-      reply: "Error aa gaya bhai 😳",
+      reply: err.message
     });
   }
 });
 
-// 🚀 PORT FIX (Render ke liye)
+// port fix
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
