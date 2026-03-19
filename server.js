@@ -28,7 +28,7 @@ app.post("/chat", async (req, res) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "openchat/openchat-3.5", // ✅ working free model
+        model: "mistralai/mistral-7b-instruct:free",
         messages: [
           { role: "user", content: message }
         ]
