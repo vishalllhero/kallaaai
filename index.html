@@ -1,24 +1,117 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>KALLAA AI</title>
+<meta charset="UTF-8">
+<title>KALLAA AI</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #0f172a;
+  color: white;
+  margin: 0;
+}
+
+.container {
+  max-width: 700px;
+  margin: auto;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+  color: #38bdf8;
+}
+
+.chat-box {
+  height: 400px;
+  overflow-y: auto;
+  background: #1e293b;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+}
+
+.message {
+  margin: 10px 0;
+}
+
+.user {
+  text-align: right;
+  color: #38bdf8;
+}
+
+.bot {
+  text-align: left;
+  color: #f1f5f9;
+}
+
+.input-area {
+  display: flex;
+  gap: 10px;
+}
+
+input {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  padding: 10px 15px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.send-btn {
+  background: #38bdf8;
+  color: black;
+}
+
+.mic-btn {
+  background: #22c55e;
+  color: white;
+}
+</style>
+
 </head>
 <body>
 
-<h1>🎨 KALLAA AI Assistant</h1>
+<div class="container">
+  <h1>🤖 KALLAA AI (Jarvis)</h1>
 
-<input id="input" placeholder="Ask something..." />
-<button onclick="send()">Send</button>
+  <div class="chat-box" id="chat"></div>
 
-<br><br>
-
-<button onclick="startListening()">🎤 Speak</button>
-
-<p id="response"></p>
+  <div class="input-area">
+    <input id="input" placeholder="Type or speak..." />
+    <button class="send-btn" onclick="send()">Send</button>
+    <button class="mic-btn" onclick="startListening()">🎤</button>
+  </div>
+</div>
 
 <script>
+
+// 🔥 ADD MESSAGE UI
+function addMessage(text, type) {
+  const chat = document.getElementById("chat");
+  const div = document.createElement("div");
+  div.className = "message " + type;
+  div.innerText = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+// 🚀 SEND MESSAGE
 async function send() {
-  const message = document.getElementById("input").value;
+  const input = document.getElementById("input");
+  const message = input.value;
+
+  if (!message) return;
+
+  addMessage("You: " + message, "user");
+  input.value = "";
 
   const res = await fetch("/chat", {
     method: "POST",
@@ -29,16 +122,16 @@ async function send() {
   });
 
   const data = await res.json();
-  document.getElementById("response").innerText = data.reply;
 
-  speak(data.reply); // 🔊 AI बोलेगा भी
+  addMessage("AI: " + data.reply, "bot");
+
+  speakHindi(data.reply);
 }
 
-// 🎤 Speech to Text
+// 🎤 SPEECH TO TEXT
 function startListening() {
   const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  
-  recognition.lang = "en-US";
+  recognition.lang = "hi-IN";
 
   recognition.onresult = function(event) {
     const text = event.results[0][0].transcript;
@@ -49,12 +142,27 @@ function startListening() {
   recognition.start();
 }
 
-// 🔊 Text to Speech
-function speak(text) {
+// 🔊 HINDI FEMALE VOICE
+function speakHindi(text) {
   const speech = new SpeechSynthesisUtterance(text);
-  speech.lang = "en-US";
-  window.speechSynthesis.speak(speech);
+
+  const voices = speechSynthesis.getVoices();
+
+  const female = voices.find(v => v.lang.includes("hi") && v.name.toLowerCase().includes("female")) 
+               || voices.find(v => v.lang.includes("hi")) 
+               || voices[0];
+
+  speech.voice = female;
+  speech.lang = "hi-IN";
+
+  speechSynthesis.speak(speech);
 }
+
+// 🤖 JARVIS GREETING
+window.onload = () => {
+  speakHindi("Namaste! Main Kallaa AI hoon. Aap kya puchna chahte hain?");
+};
+
 </script>
 
 </body>
