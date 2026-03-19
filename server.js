@@ -1,218 +1,57 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>KALLAA AI</title>
-<script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
+import express from "express";
+import cors from "cors";
+import fetch from "node-fetch";
+import path from "path";
+import { fileURLToPath } from "url";
 
-<style>
-body {
-  margin:0;
-  font-family:Arial;
-  background:#0f172a;
-  color:white;
-}
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-/* HEADER */
-.header {
-  display:flex;
-  justify-content:space-between;
-  padding:15px;
-  background:#020617;
-  border-bottom:1px solid #334155;
-}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
-.brand {
-  font-size:20px;
-  font-weight:bold;
-}
+// serve html
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
 
-.wallet {
-  font-size:12px;
-  color:#38bdf8;
-}
+// AI
+app.post("/chat", async (req, res) => {
+  const { message } = req.body;
 
-/* MAIN */
-.container {
-  max-width:900px;
-  margin:auto;
-  padding:20px;
-}
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "openrouter/auto",
+        messages: [
+          { role: "system", content: "You are KALLAA AI" },
+          { role: "user", content: message }
+        ]
+      })
+    });
 
-/* CHAT */
-.chat {
-  height:350px;
-  overflow-y:auto;
-  background:#1e293b;
-  padding:15px;
-  border-radius:12px;
-}
+    const data = await response.json();
 
-.msg {
-  margin:10px 0;
-}
+    res.json({
+      reply: data.choices?.[0]?.message?.content || "No reply"
+    });
 
-.user { text-align:right; color:#38bdf8; }
-.bot { text-align:left; color:white; }
+  } catch {
+    res.json({ reply: "Error 😢" });
+  }
+});
 
-/* INPUT */
-.input-area {
-  margin-top:10px;
-  display:flex;
-  gap:10px;
-}
+// order
+app.post("/order", (req, res) => {
+  console.log(req.body);
+  res.json({ success: true });
+});
 
-input {
-  flex:1;
-  padding:10px;
-  border-radius:8px;
-  border:none;
-}
-
-button {
-  padding:10px;
-  border:none;
-  border-radius:8px;
-  cursor:pointer;
-}
-
-.send { background:#38bdf8; }
-.mic { background:#22c55e; }
-
-/* PRODUCT */
-.product {
-  margin-top:20px;
-  background:#1e293b;
-  padding:15px;
-  border-radius:10px;
-}
-
-/* BUY */
-.buy {
-  width:100%;
-  background:#f59e0b;
-  margin-top:10px;
-}
-</style>
-</head>
-
-<body>
-
-<div class="header">
-  <div class="brand">🤖 KALLAA AI</div>
-  <button onclick="connectWallet()">Connect</button>
-</div>
-
-<div class="container">
-
-  <p id="wallet" class="wallet"></p>
-
-  <div class="chat" id="chat"></div>
-
-  <div class="input-area">
-    <input id="input" placeholder="Describe your design..." />
-    <button class="send" onclick="send()">Send</button>
-    <button class="mic" onclick="voice()">🎤</button>
-  </div>
-
-  <div class="product">
-    <h3>👕 Choose Product</h3>
-    <select id="product">
-      <option>T-Shirt</option>
-      <option>Hoodie</option>
-    </select>
-
-    <button class="buy" onclick="buy()">Buy with SOL</button>
-  </div>
-
-</div>
-
-<script>
-
-let walletAddress="";
-
-// wallet
-async function connectWallet(){
-  const r=await window.solana.connect();
-  walletAddress=r.publicKey.toString();
-  document.getElementById("wallet").innerText=walletAddress;
-}
-
-// chat UI
-function add(text,type){
-  const c=document.getElementById("chat");
-  const d=document.createElement("div");
-  d.className="msg "+type;
-  d.innerText=text;
-  c.appendChild(d);
-  c.scrollTop=c.scrollHeight;
-}
-
-// send
-async function send(){
-  let msg=document.getElementById("input").value;
-  if(!msg)return;
-
-  add("You: "+msg,"user");
-
-  const res=await fetch("/chat",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:msg})
-  });
-
-  const data=await res.json();
-
-  add("AI: "+data.reply,"bot");
-  speak(data.reply);
-}
-
-// voice
-function voice(){
-  const r=new(window.SpeechRecognition||window.webkitSpeechRecognition)();
-  r.lang="hi-IN";
-  r.onresult=e=>{
-    document.getElementById("input").value=e.results[0][0].transcript;
-    send();
-  };
-  r.start();
-}
-
-// speak
-function speak(t){
-  const s=new SpeechSynthesisUtterance(t);
-  s.lang="hi-IN";
-  speechSynthesis.speak(s);
-}
-
-// buy
-async function buy(){
-  const conn=new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("devnet"));
-
-  const tx=new solanaWeb3.Transaction().add(
-    solanaWeb3.SystemProgram.transfer({
-      fromPubkey:window.solana.publicKey,
-      toPubkey:new solanaWeb3.PublicKey("7E2tymKQgBZEjEYkDeTLqSXMNTLhF2LzQPGmrb39DvLZ"),
-      lamports:0.01*solanaWeb3.LAMPORTS_PER_SOL
-    })
-  );
-
-  const sig=await window.solana.signAndSendTransaction(tx);
-  await conn.confirmTransaction(sig.signature);
-
-  alert("Payment Done 🚀");
-
-  await fetch("/order",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      wallet:walletAddress,
-      product:document.getElementById("product").value,
-      tx:sig.signature
-    })
-  });
-}
-
-</script>
-
-</body>
-</html>
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Server running"));
