@@ -11,12 +11,12 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// frontend serve
+// serve frontend
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// OpenRouter FREE AI
+// 🔥 FREE FAST AI (OpenRouter)
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
@@ -36,10 +36,17 @@ app.post("/chat", async (req, res) => {
     });
 
     const data = await response.json();
+    console.log("API RESPONSE:", data);
 
-    res.json({
-      reply: data.choices?.[0]?.message?.content || "No reply"
-    });
+    let reply = "No reply";
+
+    if (data.choices && data.choices.length > 0) {
+      reply = data.choices[0].message?.content;
+    } else if (data.error) {
+      reply = data.error.message;
+    }
+
+    res.json({ reply });
 
   } catch (err) {
     console.error(err);
