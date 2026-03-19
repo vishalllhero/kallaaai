@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename);
 
 
 // 🗄️ DATABASE CONNECT
-mongoose.connect("mongodb://127.0.0.1:27017/kallaa")
+mongoose.connect(process.env.MONGO_URL)
   .then(() => console.log("DB Connected 🔥"))
   .catch(err => console.log(err));
 
