@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import OpenAI from "openai";
+import fetch from "node-fetch";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -8,7 +8,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// fix __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -17,38 +16,41 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// OpenAI setup
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-// chat route
+// 🔥 FAST FREE AI (OpenRouter)
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
   try {
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "user", content: message }
-      ],
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "mistralai/mistral-7b-instruct", // fast free model
+        messages: [
+          { role: "user", content: message }
+        ],
+      }),
     });
 
+    const data = await response.json();
+
     res.json({
-      reply: completion.choices[0].message.content,
+      reply: data.choices?.[0]?.message?.content || "No reply",
     });
 
   } catch (err) {
     console.error(err);
     res.json({
-      reply: err.message
+      reply: "Error aa gaya bhai 😢",
     });
   }
 });
 
-// port fix
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🔥 KALLAA AI running on port ${PORT}`);
+  console.log(`🔥 FREE FAST AI running on port ${PORT}`);
 });
