@@ -1,99 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>KALLAA AI</title>
+  <title>KALLAA AI</title>
+  <script src="https://unpkg.com/@solana/web3.js@latest/lib/index.iife.js"></script>
 
 <style>
 body {
-  font-family: Arial, sans-serif;
   background: #0f172a;
   color: white;
-  margin: 0;
+  font-family: Arial;
 }
-
 .container {
   max-width: 700px;
   margin: auto;
   padding: 20px;
 }
-
-h1 {
-  text-align: center;
-  color: #38bdf8;
-}
-
-.chat-box {
-  height: 400px;
+.chat {
+  height: 350px;
   overflow-y: auto;
   background: #1e293b;
-  padding: 15px;
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-
-.message {
-  margin: 10px 0;
-}
-
-.user {
-  text-align: right;
-  color: #38bdf8;
-}
-
-.bot {
-  text-align: left;
-  color: #f1f5f9;
-}
-
-.input-area {
-  display: flex;
-  gap: 10px;
-}
-
-input {
-  flex: 1;
   padding: 10px;
-  border-radius: 8px;
-  border: none;
+  border-radius: 10px;
 }
-
+.message {
+  margin: 8px 0;
+}
+.user { color: #38bdf8; text-align: right; }
+.bot { color: #f1f5f9; text-align: left; }
+input {
+  width: 60%;
+  padding: 10px;
+}
 button {
-  padding: 10px 15px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.send-btn {
-  background: #38bdf8;
-  color: black;
-}
-
-.mic-btn {
-  background: #22c55e;
-  color: white;
+  padding: 10px;
+  margin: 5px;
 }
 </style>
-
 </head>
+
 <body>
 
 <div class="container">
-  <h1>🤖 KALLAA AI (Jarvis)</h1>
+  <h2>🤖 KALLAA AI + NFT</h2>
 
-  <div class="chat-box" id="chat"></div>
+  <button onclick="connectWallet()">🔗 Connect Wallet</button>
+  <p id="wallet"></p>
 
-  <div class="input-area">
-    <input id="input" placeholder="Type or speak..." />
-    <button class="send-btn" onclick="send()">Send</button>
-    <button class="mic-btn" onclick="startListening()">🎤</button>
-  </div>
+  <div class="chat" id="chat"></div>
+
+  <input id="input" placeholder="Type or speak..." />
+  <button onclick="send()">Send</button>
+  <button onclick="startListening()">🎤</button>
+
+  <br><br>
+
+  <button onclick="payNow()">💰 Buy with SOL</button>
 </div>
 
 <script>
 
-// 🔥 ADD MESSAGE UI
+let walletAddress = "";
+
+// 🔗 WALLET CONNECT
+async function connectWallet() {
+  const resp = await window.solana.connect();
+  walletAddress = resp.publicKey.toString();
+  document.getElementById("wallet").innerText = walletAddress;
+}
+
+// 💬 CHAT UI
 function addMessage(text, type) {
   const chat = document.getElementById("chat");
   const div = document.createElement("div");
@@ -103,65 +78,77 @@ function addMessage(text, type) {
   chat.scrollTop = chat.scrollHeight;
 }
 
-// 🚀 SEND MESSAGE
+// 🤖 AI CHAT
 async function send() {
   const input = document.getElementById("input");
-  const message = input.value;
+  const msg = input.value;
 
-  if (!message) return;
+  if (!msg) return;
 
-  addMessage("You: " + message, "user");
+  addMessage("You: " + msg, "user");
   input.value = "";
 
   const res = await fetch("/chat", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({ message })
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({ message: msg })
   });
 
   const data = await res.json();
 
   addMessage("AI: " + data.reply, "bot");
 
-  speakHindi(data.reply);
+  speak(data.reply);
 }
 
-// 🎤 SPEECH TO TEXT
+// 🎤 VOICE INPUT
 function startListening() {
-  const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-  recognition.lang = "hi-IN";
+  const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+  rec.lang = "hi-IN";
 
-  recognition.onresult = function(event) {
-    const text = event.results[0][0].transcript;
+  rec.onresult = (e) => {
+    const text = e.results[0][0].transcript;
     document.getElementById("input").value = text;
     send();
   };
 
-  recognition.start();
+  rec.start();
 }
 
-// 🔊 HINDI FEMALE VOICE
-function speakHindi(text) {
+// 🔊 VOICE OUTPUT
+function speak(text) {
   const speech = new SpeechSynthesisUtterance(text);
-
-  const voices = speechSynthesis.getVoices();
-
-  const female = voices.find(v => v.lang.includes("hi") && v.name.toLowerCase().includes("female")) 
-               || voices.find(v => v.lang.includes("hi")) 
-               || voices[0];
-
-  speech.voice = female;
   speech.lang = "hi-IN";
-
   speechSynthesis.speak(speech);
 }
 
-// 🤖 JARVIS GREETING
-window.onload = () => {
-  speakHindi("Namaste! Main Kallaa AI hoon. Aap kya puchna chahte hain?");
-};
+// 💰 SOL PAYMENT
+async function payNow() {
+  const connection = new solanaWeb3.Connection(solanaWeb3.clusterApiUrl("devnet"));
+
+  const transaction = new solanaWeb3.Transaction().add(
+    solanaWeb3.SystemProgram.transfer({
+      fromPubkey: window.solana.publicKey,
+      toPubkey: new solanaWeb3.PublicKey("7E2tymKQgBZEjEYkDeTLqSXMNTLhF2LzQPGmrb39DvLZ"),
+      lamports: 0.01 * solanaWeb3.LAMPORTS_PER_SOL
+    })
+  );
+
+  const signature = await window.solana.signAndSendTransaction(transaction);
+  await connection.confirmTransaction(signature.signature);
+
+  alert("Payment Success 🚀");
+
+  // SAVE ORDER
+  await fetch("/order", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({
+      wallet: walletAddress,
+      txHash: signature.signature
+    })
+  });
+}
 
 </script>
 

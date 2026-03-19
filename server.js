@@ -11,12 +11,12 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// serve frontend
+// 🌐 FRONTEND
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// 🔥 FREE FAST AI (OpenRouter)
+// 🤖 AI CHAT
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
@@ -30,13 +30,20 @@ app.post("/chat", async (req, res) => {
       body: JSON.stringify({
         model: "openrouter/auto",
         messages: [
-          { role: "user", content: message }
+          {
+            role: "system",
+            content: "You are a smart AI assistant like Jarvis. Reply in Hindi + English mix."
+          },
+          {
+            role: "user",
+            content: message
+          }
         ]
       })
     });
 
     const data = await response.json();
-    console.log("API RESPONSE:", data);
+    console.log("AI:", data);
 
     let reply = "No reply";
 
@@ -50,14 +57,24 @@ app.post("/chat", async (req, res) => {
 
   } catch (err) {
     console.error(err);
-    res.json({
-      reply: "Error aa gaya bhai 😢"
-    });
+    res.json({ reply: "Error aa gaya 😢" });
   }
 });
 
+// 💰 ORDER SAVE
+app.post("/order", (req, res) => {
+  const { wallet, txHash } = req.body;
+
+  console.log("🛒 NEW ORDER:");
+  console.log("Wallet:", wallet);
+  console.log("TX:", txHash);
+
+  res.json({ success: true });
+});
+
+// 🚀 SERVER
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🔥 FREE FAST AI running on port ${PORT}`);
+  console.log(`🔥 KALLAA AI running on ${PORT}`);
 });
