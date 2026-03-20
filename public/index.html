@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KALLAA AI</title>
+</head>
+
+<body>
+
+<h1>🎨 KALLAA AI</h1>
+
+<h3>Login</h3>
+<input id="user" placeholder="username">
+<input id="pass" type="password" placeholder="password">
+<button onclick="login()">Login</button>
+
+<hr>
+
+<h3>AI Chat</h3>
+<input id="input">
+<button onclick="send()">Send</button>
+
+<p id="response"></p>
+
+<script>
+async function login() {
+  const username = document.getElementById("user").value;
+  const password = document.getElementById("pass").value;
+
+  const res = await fetch("/login", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({username,password})
+  });
+
+  const data = await res.json();
+
+  if(data.success){
+    window.location.href="/admin.html";
+  } else {
+    alert("Wrong login");
+  }
+}
+
+async function send() {
+  const message = document.getElementById("input").value;
+
+  const res = await fetch("/chat", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({message})
+  });
+
+  const data = await res.json();
+  document.getElementById("response").innerText = data.reply;
+}
+</script>
+
+</body>
+</html>

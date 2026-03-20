@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Admin Panel</title>
+  <style>
+    body { background:#0f172a; color:white; font-family:sans-serif; }
+    h1 { color:#22c55e; }
+    .card {
+      background:#1e293b;
+      padding:15px;
+      margin:10px;
+      border-radius:10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🔥 Orders Dashboard</h1>
+
+<div id="orders"></div>
+
+<script>
+async function loadOrders() {
+  const res = await fetch("/orders");
+  const data = await res.json();
+
+  const container = document.getElementById("orders");
+
+  data.forEach(o => {
+    container.innerHTML += `
+      <div class="card">
+        <p>Wallet: ${o.wallet}</p>
+        <p>TX: ${o.txHash}</p>
+        <p>Date: ${new Date(o.date).toLocaleString()}</p>
+      </div>
+    `;
+  });
+}
+
+loadOrders();
+</script>
+
+</body>
+</html>
