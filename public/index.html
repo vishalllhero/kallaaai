@@ -11,9 +11,7 @@
       padding: 20px;
     }
 
-    h1 {
-      text-align: center;
-    }
+    h1 { text-align: center; }
 
     .box {
       background: #1e2a3a;
@@ -45,24 +43,6 @@
 
 <h1>🎨 KALLAA AI</h1>
 
-<!-- LOGIN -->
-<div class="box">
-  <h3>Login</h3>
-  <input id="user" placeholder="username">
-  <input id="pass" type="password" placeholder="password">
-  <br><br>
-  <button onclick="login()">Login</button>
-</div>
-
-<!-- CHAT -->
-<div class="box">
-  <h3>AI Chat</h3>
-  <input id="input" placeholder="Ask design...">
-  <button onclick="send()">Send</button>
-  <p id="response"></p>
-</div>
-
-<!-- BUY -->
 <div class="box">
   <h3>👕 Choose Product</h3>
 
@@ -74,57 +54,23 @@
 
   <br><br>
 
-  <button onclick="buy()">Buy with SOL</button>
+  <!-- 🔥 BUTTON -->
+  <button id="buyBtn">Buy with SOL</button>
 </div>
 
 <script>
 
-/* LOGIN */
-async function login() {
-  const username = document.getElementById("user").value;
-  const password = document.getElementById("pass").value;
-
-  const res = await fetch("/login", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({username,password})
-  });
-
-  const data = await res.json();
-
-  if(data.success){
-    window.location.href="/admin";
-  } else {
-    alert("Wrong login ❌");
-  }
-}
-
-/* CHAT */
-async function send() {
-  const message = document.getElementById("input").value;
-
-  const res = await fetch("/chat", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({message})
-  });
-
-  const data = await res.json();
-  document.getElementById("response").innerText = data.reply;
-}
-
-/* 🔥 FINAL ORDER SAVE */
-async function buy() {
+document.getElementById("buyBtn").addEventListener("click", async () => {
 
   const product = document.getElementById("product").value;
 
   const wallet = "user_" + Math.floor(Math.random() * 10000);
   const tx = "tx_" + Math.random().toString(36).substring(7);
 
-  console.log("🚀 Sending order...");
+  console.log("🚀 BUTTON CLICKED");
 
   try {
-    const res = await fetch("/order", {   // 👈 IMPORTANT (NO FULL URL)
+    const res = await fetch("/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -138,7 +84,7 @@ async function buy() {
 
     const data = await res.json();
 
-    console.log("✅ Response:", data);
+    console.log("✅ RESPONSE:", data);
 
     if (data.success) {
       alert("✅ Order Saved!");
@@ -147,10 +93,10 @@ async function buy() {
     }
 
   } catch (err) {
-    console.log(err);
-    alert("❌ Error sending order");
+    console.log("❌ ERROR:", err);
   }
-}
+
+});
 
 </script>
 
