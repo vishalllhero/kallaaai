@@ -8,6 +8,7 @@
 
 <h1>🎨 KALLAA AI</h1>
 
+<!-- LOGIN -->
 <h3>Login</h3>
 <input id="user" placeholder="username">
 <input id="pass" type="password" placeholder="password">
@@ -15,13 +16,30 @@
 
 <hr>
 
+<!-- AI CHAT -->
 <h3>AI Chat</h3>
-<input id="input">
+<input id="input" placeholder="Ask design...">
 <button onclick="send()">Send</button>
 
 <p id="response"></p>
 
+<hr>
+
+<!-- PRODUCT -->
+<h3>Choose Product</h3>
+<select id="product">
+  <option value="T-Shirt">T-Shirt</option>
+  <option value="Hoodie">Hoodie</option>
+  <option value="Shoes">Shoes</option>
+</select>
+
+<br><br>
+
+<button onclick="buyNow()">Buy with SOL</button>
+
 <script>
+
+/* ================= LOGIN ================= */
 async function login() {
   const username = document.getElementById("user").value;
   const password = document.getElementById("pass").value;
@@ -41,6 +59,7 @@ async function login() {
   }
 }
 
+/* ================= AI CHAT ================= */
 async function send() {
   const message = document.getElementById("input").value;
 
@@ -53,6 +72,43 @@ async function send() {
   const data = await res.json();
   document.getElementById("response").innerText = data.reply;
 }
+
+/* ================= ORDER SAVE ================= */
+async function buyNow() {
+
+  const product = document.getElementById("product").value;
+
+  // fake wallet + tx (testing)
+  const wallet = "wallet_" + Math.floor(Math.random() * 10000);
+  const tx = "tx_" + Math.random().toString(36).substring(7);
+
+  try {
+    const res = await fetch("/order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        wallet,
+        product,
+        tx
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      alert("✅ Order Saved!");
+    } else {
+      alert("❌ Failed!");
+    }
+
+  } catch (err) {
+    alert("Error 😢");
+    console.log(err);
+  }
+}
+
 </script>
 
 </body>
