@@ -62,7 +62,7 @@
   <p id="response"></p>
 </div>
 
-<!-- BUY PRODUCT -->
+<!-- BUY -->
 <div class="box">
   <h3>👕 Choose Product</h3>
 
@@ -74,7 +74,6 @@
 
   <br><br>
 
-  <!-- 🔥 IMPORTANT -->
   <button onclick="buy()">Buy with SOL</button>
 </div>
 
@@ -85,7 +84,7 @@ async function login() {
   const username = document.getElementById("user").value;
   const password = document.getElementById("pass").value;
 
-  const res = await fetch("https://kallaaai.onrender.com/login", {
+  const res = await fetch("/login", {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({username,password})
@@ -104,7 +103,7 @@ async function login() {
 async function send() {
   const message = document.getElementById("input").value;
 
-  const res = await fetch("https://kallaaai.onrender.com/chat", {
+  const res = await fetch("/chat", {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({message})
@@ -114,7 +113,7 @@ async function send() {
   document.getElementById("response").innerText = data.reply;
 }
 
-/* 🔥 FINAL ORDER SAVE FIX */
+/* 🔥 FINAL ORDER SAVE */
 async function buy() {
 
   const product = document.getElementById("product").value;
@@ -125,7 +124,7 @@ async function buy() {
   console.log("🚀 Sending order...");
 
   try {
-    const res = await fetch("https://kallaaai.onrender.com/order", {
+    const res = await fetch("/order", {   // 👈 IMPORTANT (NO FULL URL)
       method: "POST",
       headers: {
         "Content-Type": "application/json"
