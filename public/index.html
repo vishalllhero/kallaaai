@@ -74,7 +74,7 @@
 
   <br><br>
 
-  <!-- 🔥 IMPORTANT BUTTON FIX -->
+  <!-- 🔥 IMPORTANT -->
   <button onclick="buy()">Buy with SOL</button>
 </div>
 
@@ -85,7 +85,7 @@ async function login() {
   const username = document.getElementById("user").value;
   const password = document.getElementById("pass").value;
 
-  const res = await fetch("/login", {
+  const res = await fetch("https://kallaaai.onrender.com/login", {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({username,password})
@@ -104,7 +104,7 @@ async function login() {
 async function send() {
   const message = document.getElementById("input").value;
 
-  const res = await fetch("/chat", {
+  const res = await fetch("https://kallaaai.onrender.com/chat", {
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({message})
@@ -114,7 +114,7 @@ async function send() {
   document.getElementById("response").innerText = data.reply;
 }
 
-/* 🔥 ORDER SAVE (FINAL FIX) */
+/* 🔥 FINAL ORDER SAVE FIX */
 async function buy() {
 
   const product = document.getElementById("product").value;
@@ -125,7 +125,7 @@ async function buy() {
   console.log("🚀 Sending order...");
 
   try {
-    const res = await fetch("/order", {
+    const res = await fetch("https://kallaaai.onrender.com/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
