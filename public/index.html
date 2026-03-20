@@ -11,7 +11,9 @@
       padding: 20px;
     }
 
-    h1 { text-align: center; }
+    h1 {
+      text-align: center;
+    }
 
     .box {
       background: #1e2a3a;
@@ -43,6 +45,7 @@
 
 <h1>🎨 KALLAA AI</h1>
 
+<!-- PRODUCT -->
 <div class="box">
   <h3>👕 Choose Product</h3>
 
@@ -54,20 +57,20 @@
 
   <br><br>
 
-  <!-- 🔥 BUTTON -->
-  <button id="buyBtn">Buy with SOL</button>
+  <button onclick="buy()">Buy with SOL</button>
 </div>
 
 <script>
 
-document.getElementById("buyBtn").addEventListener("click", async () => {
+/* 🔥 FINAL WORKING BUY FUNCTION */
+async function buy() {
+
+  console.log("🚀 BUTTON CLICKED");
 
   const product = document.getElementById("product").value;
 
-  const wallet = "user_" + Math.floor(Math.random() * 10000);
+  const wallet = "test_user";
   const tx = "tx_" + Math.random().toString(36).substring(7);
-
-  console.log("🚀 BUTTON CLICKED");
 
   try {
     const res = await fetch("/order", {
@@ -94,9 +97,9 @@ document.getElementById("buyBtn").addEventListener("click", async () => {
 
   } catch (err) {
     console.log("❌ ERROR:", err);
+    alert("Error aa gaya");
   }
-
-});
+}
 
 </script>
 
