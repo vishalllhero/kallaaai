@@ -1,39 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Panel</title>
+  <title>KALLAA Admin</title>
   <style>
-    body { background:#0f172a; color:white; font-family:sans-serif; }
-    h1 { color:#22c55e; }
-    .card {
-      background:#1e293b;
-      padding:15px;
-      margin:10px;
-      border-radius:10px;
+    body {
+      font-family: Arial;
+      background: #0f172a;
+      color: white;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      background: #1e293b;
+    }
+
+    th, td {
+      padding: 10px;
+      border: 1px solid #334155;
+      text-align: center;
+    }
+
+    th {
+      background: #0ea5e9;
     }
   </style>
 </head>
-
 <body>
 
-<h1>🔥 Orders Dashboard</h1>
+<h1>🔥 KALLAA Admin Panel</h1>
 
-<div id="orders"></div>
+<table>
+  <thead>
+    <tr>
+      <th>Wallet</th>
+      <th>Product</th>
+      <th>TX</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody id="orders"></tbody>
+</table>
 
 <script>
 async function loadOrders() {
   const res = await fetch("/orders");
   const data = await res.json();
 
-  const container = document.getElementById("orders");
+  const table = document.getElementById("orders");
+
+  table.innerHTML = "";
 
   data.forEach(o => {
-    container.innerHTML += `
-      <div class="card">
-        <p>Wallet: ${o.wallet}</p>
-        <p>TX: ${o.txHash}</p>
-        <p>Date: ${new Date(o.date).toLocaleString()}</p>
-      </div>
+    table.innerHTML += `
+      <tr>
+        <td>${o.wallet}</td>
+        <td>${o.product}</td>
+        <td>${o.tx}</td>
+        <td>${new Date(o.date).toLocaleString()}</td>
+      </tr>
     `;
   });
 }
