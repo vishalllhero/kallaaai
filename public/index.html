@@ -2,71 +2,40 @@
 <html>
 <head>
   <title>KALLAA AI</title>
-  <style>
-    body {
-      background: #0b1a2f;
-      color: white;
-      font-family: Arial;
-      padding: 20px;
-    }
-
-    .box {
-      background: #1e2a3a;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-
-    input, select {
-      padding: 10px;
-      width: 80%;
-      margin: 5px 0;
-    }
-
-    button {
-      padding: 12px 20px;
-      background: orange;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-  </style>
 </head>
 
-<body>
+<body style="background:#0b1a2f;color:white;font-family:sans-serif;padding:20px;">
 
 <h1>🎨 KALLAA AI</h1>
 
-<div class="box">
-  <h3>Login</h3>
-  <input id="user" placeholder="username">
-  <input id="pass" type="password" placeholder="password">
-  <br>
-  <button onclick="login()">Login</button>
-</div>
+<h3>Login</h3>
+<input id="user" placeholder="username">
+<input id="pass" type="password" placeholder="password">
+<button onclick="login()">Login</button>
 
-<div class="box">
-  <h3>AI Chat</h3>
-  <input id="input" placeholder="Ask design...">
-  <button onclick="send()">Send</button>
-  <p id="response"></p>
-</div>
+<hr>
 
-<div class="box">
-  <h3>Choose Product</h3>
-  <select id="product">
-    <option value="T-Shirt">T-Shirt</option>
-    <option value="Hoodie">Hoodie</option>
-    <option value="Shoes">Shoes</option>
-  </select>
-  <br><br>
-  <button onclick="buyNow()">Buy with SOL</button>
-</div>
+<h3>AI Chat</h3>
+<input id="input">
+<button onclick="send()">Send</button>
+<p id="response"></p>
+
+<hr>
+
+<h3>Buy Product</h3>
+<select id="product">
+  <option value="T-Shirt">T-Shirt</option>
+  <option value="Hoodie">Hoodie</option>
+</select>
+
+<br><br>
+
+<button onclick="buy()">Buy Now</button>
 
 <script>
 
 /* LOGIN */
-async function login() {
+async function login(){
   const username = document.getElementById("user").value;
   const password = document.getElementById("pass").value;
 
@@ -85,8 +54,8 @@ async function login() {
   }
 }
 
-/* AI CHAT */
-async function send() {
+/* CHAT */
+async function send(){
   const message = document.getElementById("input").value;
 
   const res = await fetch("/chat", {
@@ -99,40 +68,34 @@ async function send() {
   document.getElementById("response").innerText = data.reply;
 }
 
-/* ORDER SAVE (MAIN FIX 🔥) */
-async function buyNow() {
+/* 🔥 ORDER SAVE FIX */
+async function buy(){
 
   const product = document.getElementById("product").value;
 
-  const wallet = "wallet_" + Math.floor(Math.random() * 10000);
+  const wallet = "user_wallet_" + Math.floor(Math.random()*1000);
   const tx = "tx_" + Math.random().toString(36).substring(7);
 
   console.log("Sending order...");
 
-  try {
-    const res = await fetch("/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        wallet,
-        product,
-        tx
-      })
-    });
+  const res = await fetch("/order", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+      wallet: wallet,
+      product: product,
+      tx: tx
+    })
+  });
 
-    const data = await res.json();
-    console.log(data);
+  const data = await res.json();
+  console.log(data);
 
-    if (data.success) {
-      alert("✅ Order Saved!");
-    } else {
-      alert("❌ Failed!");
-    }
-
-  } catch (err) {
-    console.log(err);
+  if(data.success){
+    alert("✅ Order Saved");
+  } else {
     alert("❌ Error");
   }
 }
