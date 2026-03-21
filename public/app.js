@@ -1,39 +1,63 @@
+// FILE NAME: src/App.jsx
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 
-function App() {
+export default function App() {
   const [prompt, setPrompt] = useState("");
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [wallet, setWallet] = useState(false);
 
   const generateImage = () => {
     if (!prompt) return;
     setLoading(true);
 
     setTimeout(() => {
-      setImage("https://picsum.photos/400/400");
+      setImage("https://picsum.photos/500/600");
       setLoading(false);
     }, 2000);
   };
 
+  const connectWallet = () => {
+    setWallet(true);
+    alert("Wallet Connected (Demo)");
+  };
+
   return (
     <div style={styles.container}>
-      {/* Navbar */}
+      {/* NAVBAR */}
       <div style={styles.nav}>
-        <h1>🔥 KALLAA AI</h1>
-        <button style={styles.walletBtn}>Connect Wallet</button>
+        <h2 style={styles.logo}>KALLAA AI</h2>
+        <div style={styles.links}>
+          <span>MEN</span>
+          <span>WOMEN</span>
+          <span>KIDS</span>
+          <span>HOME</span>
+        </div>
+        <button onClick={connectWallet} style={styles.walletBtn}>
+          {wallet ? "Connected" : "Connect Wallet"}
+        </button>
       </div>
 
-      {/* Hero */}
+      {/* HERO */}
       <div style={styles.hero}>
-        <h2>Design. Wear. Sell — Powered by AI 🎨</h2>
-        <p>Turn your imagination into wearable art</p>
+        <div>
+          <h1 style={styles.heroText}>FLAT AI DESIGN</h1>
+          <h1 style={styles.heroText}>CREATE & WEAR</h1>
+          <p>Design your clothes using AI</p>
+        </div>
+
+        <img
+          src="https://images.unsplash.com/photo-1520975922284-9e0f8b6c1b5c"
+          style={styles.heroImg}
+        />
       </div>
 
-      {/* Input */}
-      <div style={styles.inputBox}>
+      {/* AI GENERATOR */}
+      <div style={styles.generator}>
         <input
-          placeholder="Cyberpunk dragon hoodie..."
+          placeholder="Describe your AI design..."
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
           style={styles.input}
@@ -43,137 +67,135 @@ function App() {
         </button>
       </div>
 
-      {/* Preview */}
+      {/* PREVIEW */}
       <div style={styles.preview}>
         {loading ? (
           <p>Generating...</p>
         ) : image ? (
           <motion.img
             src={image}
-            alt="Generated"
-            style={styles.image}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            style={styles.previewImg}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
           />
         ) : (
-          <p>Your design will appear here</p>
+          <p>Your AI design will appear here</p>
         )}
       </div>
 
-      {/* Products */}
+      {/* PRODUCTS */}
       <div style={styles.products}>
         <div style={styles.card}>
+          <img src={image || "https://picsum.photos/200"} style={styles.cardImg} />
           <h3>T-Shirt</h3>
-          <p>Premium cotton AI print</p>
-          <button style={styles.buyBtn}>Buy ₹499</button>
-          <button style={styles.cryptoBtn}>Buy with SOL</button>
+          <p>₹499</p>
+          <button style={styles.buy}>Buy</button>
+          <button style={styles.sol}>Buy with SOL</button>
         </div>
 
         <div style={styles.card}>
+          <img src={image || "https://picsum.photos/201"} style={styles.cardImg} />
           <h3>Hoodie</h3>
-          <p>Premium AI hoodie</p>
-          <button style={styles.buyBtn}>Buy ₹999</button>
-          <button style={styles.cryptoBtn}>Buy with SOL</button>
+          <p>₹999</p>
+          <button style={styles.buy}>Buy</button>
+          <button style={styles.sol}>Buy with SOL</button>
         </div>
       </div>
 
-      {/* Footer */}
-      <div style={styles.footer}>
-        🚀 Built with AI + Web3 by KALLAA
-      </div>
+      {/* FOOTER */}
+      <div style={styles.footer}>© 2026 KALLAA AI</div>
     </div>
   );
 }
 
-export default App;
-
-/* STYLES */
 const styles = {
   container: {
-    background: "#020617",
-    color: "white",
-    minHeight: "100vh",
-    padding: "20px",
-    fontFamily: "sans-serif",
+    fontFamily: "Arial",
+    background: "#fff",
   },
   nav: {
     display: "flex",
     justifyContent: "space-between",
-    marginBottom: "30px",
+    padding: "15px 30px",
+    borderBottom: "1px solid #ddd",
+    alignItems: "center",
   },
+  logo: { fontWeight: "bold" },
+  links: { display: "flex", gap: "20px" },
   walletBtn: {
-    background: "#06b6d4",
-    border: "none",
-    padding: "10px 15px",
-    borderRadius: "8px",
+    background: "black",
     color: "white",
-    cursor: "pointer",
+    padding: "8px 15px",
+    border: "none",
   },
   hero: {
-    textAlign: "center",
-    marginBottom: "30px",
+    display: "flex",
+    justifyContent: "space-between",
+    padding: "40px",
   },
-  inputBox: {
+  heroText: {
+    fontSize: "50px",
+    fontWeight: "bold",
+    margin: 0,
+  },
+  heroImg: {
+    width: "400px",
+  },
+  generator: {
     display: "flex",
     justifyContent: "center",
     gap: "10px",
-    marginBottom: "30px",
+    padding: "20px",
   },
   input: {
+    width: "400px",
     padding: "10px",
-    width: "300px",
-    borderRadius: "8px",
-    border: "none",
+    border: "1px solid #ccc",
   },
   generateBtn: {
-    background: "#f97316",
-    border: "none",
-    padding: "10px 15px",
-    borderRadius: "8px",
+    background: "black",
     color: "white",
-    cursor: "pointer",
+    padding: "10px 20px",
+    border: "none",
   },
   preview: {
     textAlign: "center",
-    marginBottom: "40px",
+    padding: "20px",
   },
-  image: {
+  previewImg: {
     width: "300px",
-    borderRadius: "15px",
   },
   products: {
     display: "flex",
     justifyContent: "center",
-    gap: "20px",
+    gap: "30px",
+    padding: "30px",
   },
   card: {
-    background: "#1e293b",
-    padding: "20px",
-    borderRadius: "12px",
-    width: "200px",
     textAlign: "center",
   },
-  buyBtn: {
-    background: "#22c55e",
-    border: "none",
-    padding: "10px",
-    width: "100%",
-    marginTop: "10px",
-    borderRadius: "8px",
-    color: "white",
+  cardImg: {
+    width: "200px",
+    height: "250px",
+    objectFit: "cover",
   },
-  cryptoBtn: {
-    background: "#fb923c",
-    border: "none",
-    padding: "10px",
-    width: "100%",
-    marginTop: "10px",
-    borderRadius: "8px",
+  buy: {
+    background: "black",
     color: "white",
+    padding: "8px",
+    marginTop: "10px",
+    width: "100%",
+  },
+  sol: {
+    background: "orange",
+    color: "white",
+    padding: "8px",
+    marginTop: "5px",
+    width: "100%",
   },
   footer: {
     textAlign: "center",
-    marginTop: "40px",
-    color: "#94a3b8",
+    padding: "20px",
+    borderTop: "1px solid #ddd",
   },
 };
