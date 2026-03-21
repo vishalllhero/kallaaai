@@ -79,6 +79,35 @@ app.post("/chat", async (req, res) => {
     res.json({ reply: "Error 😢" });
   }
 });
+/* ================= AI IMAGE ================= */
+app.post("/generate-image", async (req, res) => {
+  const { prompt } = req.body;
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "stabilityai/sdxl",
+        prompt: prompt,
+        size: "1024x1024"
+      })
+    });
+
+    const data = await response.json();
+
+    const image = data.data?.[0]?.url;
+
+    res.json({ image });
+
+  } catch (err) {
+    console.log(err);
+    res.json({ image: null });
+  }
+});
 
 /* ================= ORDER SAVE ================= */
 app.post("/order", async (req, res) => {
