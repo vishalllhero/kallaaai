@@ -12,14 +12,12 @@ app.use(express.json());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-
-// 🗄️ DATABASE CONNECT
+/* ================= DATABASE ================= */
 mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("DB Connected 🔥"))
-  .catch(err => console.log(err));
+  .then(() => console.log("🔥 MongoDB Connected"))
+  .catch(err => console.log("❌ DB Error:", err));
 
-
-// 📦 SCHEMA
+/* ================= SCHEMA ================= */
 const OrderSchema = new mongoose.Schema({
   wallet: String,
   product: String,
@@ -29,14 +27,28 @@ const OrderSchema = new mongoose.Schema({
 
 const Order = mongoose.model("Order", OrderSchema);
 
+/* ================= STATIC FILES ================= */
+app.use(express.static(path.join(__dirname, "public")));
 
-// 🌐 FRONTEND
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "index.html"));
+/* ================= ROUTES ================= */
+
+// ADMIN PANEL
+app.get("/admin", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
+/* ================= LOGIN ================= */
+app.post("/login", (req, res) => {
+  const { username, password } = req.body;
 
-// 🤖 AI CHAT
+  if (username === "admin" && password === "12345") {
+    res.json({ success: true });
+  } else {
+    res.json({ success: false });
+  }
+});
+
+/* ================= AI CHAT ================= */
 app.post("/chat", async (req, res) => {
   const { message } = req.body;
 
@@ -62,56 +74,52 @@ app.post("/chat", async (req, res) => {
       reply: data.choices?.[0]?.message?.content || "No reply"
     });
 
-  } catch {
+  } catch (err) {
+    console.log("❌ CHAT ERROR:", err);
     res.json({ reply: "Error 😢" });
   }
 });
 
-
-// 💰 ORDER SAVE
+/* ================= ORDER SAVE ================= */
 app.post("/order", async (req, res) => {
-  const { wallet, product, tx } = req.body;
 
-  await Order.create({ wallet, product, tx });
+  console.log("📦 Incoming Order:", req.body);
 
-  res.json({ success: true });
+  try {
+    const { wallet, product, tx } = req.body;
+
+    const newOrder = await Order.create({ wallet, product, tx });
+
+    console.log("✅ Saved:", newOrder);
+
+    res.json({ success: true });
+
+  } catch (err) {
+    console.log("❌ ORDER ERROR:", err);
+    res.json({ success: false });
+  }
 });
 
-
-// 🧑‍💼 ADMIN PANEL
-app.get("/admin", async (req, res) => {
-  const orders = await Order.find().sort({ date: -1 });
-
-  let html = `
-    <h1>KALLAA Orders</h1>
-    <table border="1" cellpadding="10">
-    <tr>
-      <th>Wallet</th>
-      <th>Product</th>
-      <th>Transaction</th>
-      <th>Date</th>
-    </tr>
-  `;
-
-  orders.forEach(o => {
-    html += `
-      <tr>
-        <td>${o.wallet}</td>
-        <td>${o.product}</td>
-        <td>${o.tx}</td>
-        <td>${o.date}</td>
-      </tr>
-    `;
-  });
-
-  html += "</table>";
-
-  res.send(html);
+/* ================= GET ORDERS ================= */
+app.get("/orders", async (req, res) => {
+  try {
+    const orders = await Order.find().sort({ date: -1 });
+    res.json(orders);
+  } catch (err) {
+    console.log("❌ FETCH ERROR:", err);
+    res.json([]);
+  }
 });
 
+/* ================= FALLBACK (VERY IMPORTANT) ================= */
+// 👉 ANY URL → index.html
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
-const PORT = process.env.PORT || 3000;
+/* ================= SERVER ================= */
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-  console.log("🔥 Server running with DB");
+  console.log("🚀 Server running with DB on port", PORT);
 });
