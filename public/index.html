@@ -5,161 +5,133 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: #0b1a2f;
-      color: white;
-    }
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-    header {
-      display: flex;
-      justify-content: space-between;
-      padding: 20px;
-      background: #071224;
-      align-items: center;
+  <!-- CUSTOM THEME -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            canvas: '#FDFBF7',
+            ink: '#2B2926',
+            brand: {
+              blue: '#2E86C1',
+              orange: '#FF7F50',
+              purple: '#9B59B6',
+            }
+          },
+          boxShadow: {
+            lift: '0 10px 40px -10px rgba(0,0,0,0.3)',
+          }
+        }
+      }
     }
+  </script>
 
-    header button {
-      padding: 10px 15px;
-      background: #00c2ff;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .hero {
-      padding: 40px;
-      text-align: center;
-    }
-
-    .hero input {
-      width: 60%;
-      padding: 12px;
-      border-radius: 8px;
-      border: none;
-      margin-top: 10px;
-    }
-
-    .hero button {
-      padding: 12px 20px;
-      margin-left: 10px;
-      background: orange;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .preview-box {
-      margin-top: 20px;
-    }
-
-    .preview-box img {
-      max-width: 300px;
-      border-radius: 12px;
-      box-shadow: 0px 0px 20px rgba(0,0,0,0.5);
-    }
-
-    .products {
-      padding: 30px;
-    }
-
-    .products h2 {
-      margin-top: 30px;
-    }
-
-    .grid {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .card {
-      background: #1e2a3a;
-      padding: 20px;
-      border-radius: 12px;
-      width: 200px;
-      text-align: center;
-    }
-
-    .card button {
-      display: block;
-      width: 100%;
-      margin-top: 10px;
-      padding: 10px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .normal {
-      background: #00c853;
-      color: white;
-    }
-
-    .sol {
-      background: orange;
-      color: black;
-    }
-
-  </style>
 </head>
 
-<body>
+<body class="bg-[#0b1a2f] text-white">
 
-<header>
-  <h1>🔥 KALLAA AI</h1>
-  <button onclick="connectWallet()">Connect Wallet</button>
+<!-- HEADER -->
+<header class="flex justify-between items-center p-5 bg-[#071224]">
+  <h1 class="text-2xl font-bold">🔥 KALLAA AI</h1>
+  <button onclick="connectWallet()"
+    class="bg-cyan-400 px-4 py-2 rounded-lg font-bold">
+    Connect Wallet
+  </button>
 </header>
 
-<!-- AI DESIGN SECTION -->
-<section class="hero">
-  <h2>Create Your Own AI Designed Clothes</h2>
+<!-- HERO -->
+<section class="text-center py-16">
 
-  <input id="prompt" placeholder="Describe your design...">
-  <button onclick="generate()">Generate Design</button>
+  <h2 class="text-4xl font-bold mb-6">
+    Create Your AI Designed Clothes 🎨
+  </h2>
 
-  <!-- 🔥 IMAGE PREVIEW -->
-  <div class="preview-box">
-    <img id="preview">
+  <div class="flex justify-center gap-4">
+    <input id="prompt"
+      class="w-1/2 p-3 rounded-lg text-black"
+      placeholder="Describe your design...">
+
+    <button onclick="generate()"
+      class="bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-lg font-bold shadow-lift">
+      Generate
+    </button>
   </div>
+
+  <!-- IMAGE PREVIEW -->
+  <div class="mt-8 flex justify-center">
+    <img id="preview" class="w-72 rounded-xl shadow-lg">
+  </div>
+
 </section>
 
 <!-- PRODUCTS -->
-<section class="products">
+<section class="px-10 pb-20">
 
   <!-- TSHIRT -->
-  <h2>👕 T-Shirts</h2>
-  <div class="grid">
-    <div class="card">
-      <p>Basic T-Shirt</p>
-      <button class="normal" onclick="buyNormal('T-Shirt')">Buy ₹499</button>
-      <button class="sol" onclick="buySol('T-Shirt')">Buy with SOL</button>
+  <h2 class="text-2xl mb-4">👕 T-Shirts</h2>
+
+  <div class="flex gap-6 flex-wrap">
+
+    <div class="bg-[#1e2a3a] p-6 rounded-xl shadow-lift w-60">
+      <h3 class="text-lg mb-3">Basic T-Shirt</h3>
+
+      <button class="w-full bg-green-500 p-2 rounded mb-2"
+        onclick="buyNormal('T-Shirt')">
+        Buy ₹499
+      </button>
+
+      <button class="w-full bg-orange-400 p-2 rounded"
+        onclick="buySol('T-Shirt')">
+        Buy with SOL
+      </button>
     </div>
+
   </div>
 
   <!-- HOODIE -->
-  <h2>🧥 Hoodies</h2>
-  <div class="grid">
-    <div class="card">
-      <p>Premium Hoodie</p>
-      <button class="normal" onclick="buyNormal('Hoodie')">Buy ₹999</button>
-      <button class="sol" onclick="buySol('Hoodie')">Buy with SOL</button>
+  <h2 class="text-2xl mt-10 mb-4">🧥 Hoodies</h2>
+
+  <div class="flex gap-6 flex-wrap">
+
+    <div class="bg-[#1e2a3a] p-6 rounded-xl shadow-lift w-60">
+      <h3 class="text-lg mb-3">Premium Hoodie</h3>
+
+      <button class="w-full bg-green-500 p-2 rounded mb-2"
+        onclick="buyNormal('Hoodie')">
+        Buy ₹999
+      </button>
+
+      <button class="w-full bg-orange-400 p-2 rounded"
+        onclick="buySol('Hoodie')">
+        Buy with SOL
+      </button>
     </div>
+
   </div>
 
-  <!-- CUSTOM AI SECTION -->
-  <h2>🎨 Custom AI Designs</h2>
-  <div class="grid">
-    <div class="card">
-      <p>Your AI Design</p>
-      <button class="normal" onclick="buyNormal('Custom AI')">Buy ₹1499</button>
-      <button class="sol" onclick="buySol('Custom AI')">Buy with SOL</button>
+  <!-- CUSTOM AI -->
+  <h2 class="text-2xl mt-10 mb-4">🎨 Custom AI Design</h2>
+
+  <div class="flex gap-6 flex-wrap">
+
+    <div class="bg-[#1e2a3a] p-6 rounded-xl shadow-lift w-60">
+      <h3 class="text-lg mb-3">AI Generated Cloth</h3>
+
+      <button class="w-full bg-green-500 p-2 rounded mb-2"
+        onclick="buyNormal('Custom')">
+        Buy ₹1499
+      </button>
+
+      <button class="w-full bg-orange-400 p-2 rounded"
+        onclick="buySol('Custom')">
+        Buy with SOL
+      </button>
     </div>
+
   </div>
 
 </section>
