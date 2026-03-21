@@ -2,39 +2,101 @@
 <html>
 <head>
   <title>KALLAA Admin</title>
+
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
   <style>
     body {
-      font-family: Arial;
-      background: #0f172a;
+      background: #0b1a2f;
       color: white;
+      font-family: Arial;
       padding: 20px;
     }
 
     h1 {
       text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 6px;
+      border: none;
+      outline: none;
     }
 
     table {
       width: 100%;
-      margin-top: 20px;
       border-collapse: collapse;
-      background: #1e293b;
-    }
-
-    th, td {
-      padding: 10px;
-      border: 1px solid #334155;
-      text-align: center;
+      overflow: hidden;
+      border-radius: 10px;
     }
 
     th {
-      background: #0ea5e9;
+      background: #1da1f2;
+      padding: 12px;
+    }
+
+    td {
+      background: #1e2a3a;
+      padding: 10px;
+      text-align: center;
+    }
+
+    tr:hover td {
+      background: #26374d;
+    }
+
+    button {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .delete {
+      background: red;
+      color: white;
+    }
+
+    .delete:hover {
+      background: darkred;
+    }
+
+    .count {
+      font-size: 18px;
+      font-weight: bold;
     }
   </style>
 </head>
+
 <body>
 
 <h1>🔥 KALLAA Admin Panel</h1>
+
+<div class="top-bar">
+
+  <div class="count">
+    Total Orders: <span id="count">0</span>
+  </div>
+
+  <input id="search" placeholder="Search wallet..." onkeyup="searchOrders()">
+
+  <select id="filter" onchange="filterOrders()">
+    <option value="all">All</option>
+    <option value="T-Shirt">T-Shirt</option>
+    <option value="Hoodie">Hoodie</option>
+  </select>
+
+</div>
 
 <table>
   <thead>
@@ -43,33 +105,84 @@
       <th>Product</th>
       <th>TX</th>
       <th>Date</th>
+      <th>Action</th>
     </tr>
   </thead>
-  <tbody id="orders"></tbody>
+
+  <tbody id="table"></tbody>
 </table>
 
 <script>
+
+let allOrders = [];
+
+/* LOAD ORDERS */
 async function loadOrders() {
   const res = await fetch("/orders");
   const data = await res.json();
 
-  const table = document.getElementById("orders");
+  allOrders = data;
+  document.getElementById("count").innerText = data.length;
 
+  render(data);
+}
+
+/* RENDER TABLE */
+function render(data) {
+  const table = document.getElementById("table");
   table.innerHTML = "";
 
-  data.forEach(o => {
+  data.forEach(order => {
     table.innerHTML += `
       <tr>
-        <td>${o.wallet}</td>
-        <td>${o.product}</td>
-        <td>${o.tx}</td>
-        <td>${new Date(o.date).toLocaleString()}</td>
+        <td>${order.wallet}</td>
+        <td>${order.product}</td>
+        <td>${order.tx}</td>
+        <td>${new Date(order.date).toLocaleString()}</td>
+        <td>
+          <button class="delete" onclick="deleteOrder('${order._id}')">Delete</button>
+        </td>
       </tr>
     `;
   });
 }
 
+/* DELETE */
+async function deleteOrder(id) {
+  if(confirm("Delete this order?")) {
+    await fetch("/order/" + id, { method: "DELETE" });
+    loadOrders();
+  }
+}
+
+/* SEARCH */
+function searchOrders() {
+  const value = document.getElementById("search").value.toLowerCase();
+
+  const filtered = allOrders.filter(o =>
+    o.wallet.toLowerCase().includes(value)
+  );
+
+  render(filtered);
+}
+
+/* FILTER */
+function filterOrders() {
+  const value = document.getElementById("filter").value;
+
+  if (value === "all") {
+    render(allOrders);
+  } else {
+    const filtered = allOrders.filter(o => o.product === value);
+    render(filtered);
+  }
+}
+
+/* AUTO REFRESH */
+setInterval(loadOrders, 3000);
+
 loadOrders();
+
 </script>
 
 </body>
