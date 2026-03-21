@@ -20,9 +20,10 @@ async function generate() {
 
     const data = await res.json();
 
-    if (data.image) {
+    if (data.success && data.image) {
       document.getElementById("preview").src = data.image;
     } else {
+      console.log(data);
       alert("❌ Failed to generate image");
     }
 
@@ -34,12 +35,12 @@ async function generate() {
 
 /* NORMAL BUY */
 function buyNormal(product) {
-  alert("Normal payment coming next phase");
+  alert("💳 Normal payment coming soon");
 }
 
 /* SOL BUY */
 async function buySol(product) {
-  alert("Solana payment next phase 🔥");
+  alert("⚡ Solana payment next phase");
 }
 
 /* WALLET */
