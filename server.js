@@ -108,6 +108,43 @@ app.post("/generate-image", async (req, res) => {
     res.json({ image: null });
   }
 });
+/* ================= AI IMAGE GENERATION ================= */
+app.post("/generate-image", async (req, res) => {
+  const { prompt } = req.body;
+
+  console.log("🎨 Prompt:", prompt);
+
+  try {
+    const response = await fetch("https://openrouter.ai/api/v1/images/generations", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "stabilityai/sdxl",
+        prompt: prompt,
+        size: "512x512"
+      })
+    });
+
+    const data = await response.json();
+
+    console.log("🖼️ API RESPONSE:", data);
+
+    const image = data.data?.[0]?.url;
+
+    if (!image) {
+      return res.json({ success: false });
+    }
+
+    res.json({ success: true, image });
+
+  } catch (err) {
+    console.log("❌ IMAGE ERROR:", err);
+    res.json({ success: false });
+  }
+});
 
 /* ================= ORDER SAVE ================= */
 app.post("/order", async (req, res) => {
