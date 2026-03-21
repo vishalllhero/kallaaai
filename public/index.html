@@ -3,6 +3,9 @@
 <head>
   <title>KALLAA AI</title>
 
+  <!-- CACHE FIX -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+
   <style>
     body {
       background: #0b1a2f;
@@ -11,23 +14,11 @@
       padding: 20px;
     }
 
-    h1 {
-      text-align: center;
-    }
-
     .box {
       background: #1e2a3a;
       padding: 20px;
       border-radius: 10px;
       margin-bottom: 20px;
-    }
-
-    input, select {
-      padding: 10px;
-      width: 80%;
-      margin: 5px 0;
-      border-radius: 5px;
-      border: none;
     }
 
     button {
@@ -45,43 +36,37 @@
 
 <h1>🎨 KALLAA AI</h1>
 
-<!-- PRODUCT -->
 <div class="box">
   <h3>👕 Choose Product</h3>
 
   <select id="product">
     <option value="T-Shirt">T-Shirt</option>
     <option value="Hoodie">Hoodie</option>
-    <option value="Shoes">Shoes</option>
   </select>
 
   <br><br>
 
-  <button onclick="buy()">Buy with SOL</button>
+  <button onclick="buy()">Buy</button>
 </div>
 
 <script>
 
-/* 🔥 FINAL WORKING BUY FUNCTION */
 async function buy() {
 
   console.log("🚀 BUTTON CLICKED");
 
   const product = document.getElementById("product").value;
 
-  const wallet = "test_user";
-  const tx = "tx_" + Math.random().toString(36).substring(7);
-
   try {
-    const res = await fetch("/order", {
+    const res = await fetch("https://kallaaai.onrender.com/order", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        wallet,
-        product,
-        tx
+        wallet: "test_user",
+        product: product,
+        tx: "test_tx"
       })
     });
 
@@ -90,14 +75,14 @@ async function buy() {
     console.log("✅ RESPONSE:", data);
 
     if (data.success) {
-      alert("✅ Order Saved!");
+      alert("✅ ORDER SAVED");
     } else {
-      alert("❌ Failed!");
+      alert("❌ FAILED");
     }
 
   } catch (err) {
-    console.log("❌ ERROR:", err);
-    alert("Error aa gaya");
+    console.log(err);
+    alert("❌ ERROR");
   }
 }
 
