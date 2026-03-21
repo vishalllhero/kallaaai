@@ -1,89 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>KALLAA AI</title>
+  <title>KALLAA AI Store</title>
 
-  <!-- CACHE FIX -->
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-
-  <style>
-    body {
-      background: #0b1a2f;
-      color: white;
-      font-family: Arial;
-      padding: 20px;
-    }
-
-    .box {
-      background: #1e2a3a;
-      padding: 20px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      padding: 12px 20px;
-      background: orange;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-  </style>
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🎨 KALLAA AI</h1>
+<header>
+  <h1>🔥 KALLAA AI</h1>
+  <button onclick="connectWallet()">Connect Wallet</button>
+</header>
 
-<div class="box">
-  <h3>👕 Choose Product</h3>
+<section class="hero">
+  <h2>Create Your Own AI Designed Clothes</h2>
+  <input id="prompt" placeholder="Describe your design...">
+  <button onclick="generate()">Generate Design</button>
+</section>
 
-  <select id="product">
-    <option value="T-Shirt">T-Shirt</option>
-    <option value="Hoodie">Hoodie</option>
-  </select>
+<section class="products">
 
-  <br><br>
+  <h2>👕 T-Shirts</h2>
+  <div class="grid">
+    <div class="card">
+      <p>Basic T-Shirt</p>
+      <button onclick="buyNormal('T-Shirt')">Buy ₹499</button>
+      <button onclick="buySol('T-Shirt')">Buy with SOL</button>
+    </div>
+  </div>
 
-  <button onclick="buy()">Buy</button>
-</div>
+  <h2>🧥 Hoodies</h2>
+  <div class="grid">
+    <div class="card">
+      <p>Premium Hoodie</p>
+      <button onclick="buyNormal('Hoodie')">Buy ₹999</button>
+      <button onclick="buySol('Hoodie')">Buy with SOL</button>
+    </div>
+  </div>
 
-<script>
+</section>
 
-async function buy() {
-
-  console.log("🚀 BUTTON CLICKED");
-
-  const product = document.getElementById("product").value;
-
-  try {
-    const res = await fetch("https://kallaaai.onrender.com/order", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        wallet: "test_user",
-        product: product,
-        tx: "test_tx"
-      })
-    });
-
-    const data = await res.json();
-
-    console.log("✅ RESPONSE:", data);
-
-    if (data.success) {
-      alert("✅ ORDER SAVED");
-    }
-
-  } catch (err) {
-    console.log(err);
-    alert("❌ ERROR");
-  }
-}
-</script>
+<script src="app.js"></script>
 
 </body>
 </html>
